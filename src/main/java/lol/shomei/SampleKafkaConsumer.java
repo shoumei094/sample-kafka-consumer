@@ -12,8 +12,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SampleKafkaConsumer {
     private static final AtomicBoolean closed = new AtomicBoolean(false);
-    private static final String TOPIC = "test";
-    private static final String BOOTSTRAP_SERVERS = "192.168.99.100:9092";
+    private static final String TOPIC = "topic1";
+    private static final String BOOTSTRAP_SERVERS = "192.168.99.106:9092,192.168.99.107:9092";
 
     public static void main(String[] args) {
         runConsumer();
@@ -48,16 +48,13 @@ public class SampleKafkaConsumer {
 
         try {
             consumer.subscribe(Collections.singletonList(TOPIC));
-
             while (!closed.get()) {
                 ConsumerRecords<Long, String> records = consumer.poll(100);
-
-                records.forEach(record -> {
+                records.forEach(record ->
                     System.out.printf("Consumer Record:(%d, %s, %d, %d)\n",
                             record.key(), record.value(),
-                            record.partition(), record.offset());
-                });
-
+                            record.partition(), record.offset())
+                );
                 consumer.commitAsync();
             }
         } catch (WakeupException e) {
